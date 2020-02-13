@@ -4,6 +4,7 @@
   "description": "Jannen käsimusiikki sivu",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "test"
   },
   "author": "mikko",
