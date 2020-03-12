@@ -6,8 +6,11 @@ const schema = new mongoose.Schema({
         required: true,
     },
     sheetMusic: [
-        { type: String }
-    ]
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Player'
+        }
+    ],
 })
 
 module.exports = mongoose.model('Player', schema)
