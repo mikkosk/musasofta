@@ -4,7 +4,7 @@ export const ALL_PLAYERS = gql`
     query{
         allPlayers{
             instrument
-            sheetMusic {
+            notes {
                 name
                 location
                 current
@@ -20,12 +20,12 @@ export const ALL_PIECES = gql`
             title
             players {
                 instrument
-                sheetMusic {
+                _id
+                notes {
                     name
                     location
                     current
                 }
-                _id
             }
         }
     }
@@ -39,7 +39,7 @@ export const ADD_PIECE = gql`
             title
             players {
                 instrument
-                sheetMusic {
+                notes {
                     name
                     location
                     current
@@ -57,7 +57,7 @@ export const ADD_PLAYER = gql`
             instrument: $instrument
         ) {
             instrument
-            sheetMusic {
+            notes {
                 name
                 location
                 current
@@ -73,7 +73,7 @@ export const ONE_PIECE = gql`
             title
             players {
                 instrument
-                sheetMusic {
+                notes {
                     name
                     location
                     current
@@ -88,7 +88,7 @@ export const ONE_PLAYER = gql`
     query($id: String) {
         onePlayer(id: $id) {
             instrument
-            sheetMusic {
+            notes {
                 name
                 location
                 current
@@ -105,16 +105,9 @@ export const CHANGE_CURRENT = gql`
             instrument: $instrument,
             setCurrentTo: $setCurrentTo
         ) {
-            title
-            players {
-                instrument
-                sheetMusic {
-                    name
-                    location
-                    current
-                }
-                _id
-            }
+            name
+            location
+            current
         }
     }
 `
@@ -123,7 +116,7 @@ export const CURRENT_CHANGED = gql`
     subscription {
         currentChanged {
             instrument
-            sheetMusic {
+            notes {
                 name
                 location
                 current

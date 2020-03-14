@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { ONE_PIECE, CHANGE_CURRENT } from '../queries'
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import '../index.css'
 
 // Jos välität vain ID:n, muokkaa tätäkin ja BE
 
@@ -38,21 +39,45 @@ const Leader = (props) => {
     console.log(result)
     const piece = result.data.onePiece
 
-    piece.players.map(p => console.log(p))
+    const returnCurrentDiv = (n) => {
+        if (!n.current) {
+            return null
+        } else {
+            return <span>{n.name}</span>
+        }
+    }
+
+    const returnPlayerCurrent = (p) => {
+        const current = p.notes.find(n => n.current === true)
+        return current
+    }
     return (
             <div>
-                Valitse nuotit soittajille
+                <h2 className='centerDiv'>Valitse nuotit soittajille </h2>              
                 {piece.players.map(p => 
-                    <div key={p.instrument}>
-                        {p.instrument}
-                        <select id={p._id}>
-                            {p.sheetMusic.map(s => 
-                                <option key={s} value={s}>
-                                    {s}
-                                </option>
-                            )}
-                        </select>
-                        <button onClick={() => setCurrentSheet(p._id)}>Valitse</button>
+                    <div className='centerDiv'>
+                        <div key={p.instrument} className='gridContainer'>
+                            <h3 className='gridPlayer'>Soittaja</h3>
+                            <h3 className='gridChoose'>Valitse</h3>
+                            <h3 className='gridCurrent'>Nykyinen</h3>
+                            {p.instrument}
+                            <div>
+                                <select id={p._id} defaultValue={returnPlayerCurrent(p).location} onChange={() => setCurrentSheet(p._id)}>
+                                    {p.notes.map(s => 
+                                        <option key={s.location} value={s.location}>
+                                            {s.name}
+                                        </option>
+                                    )}
+                                </select>
+                            </div>
+                            <div>
+                                {p.notes.map(n => 
+                                    <span key={n.location}> 
+                                        {returnCurrentDiv(n)}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>

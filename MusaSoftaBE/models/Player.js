@@ -1,16 +1,16 @@
 const mongoose = require('mongoose')
 
-const schema = new mongoose.Schema({
+const PlayerSchema = new mongoose.Schema({
     instrument: {
         type: String,
         required: true,
     },
-    sheetMusic: [
+    notes: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Player'
+            ref: 'Note'
         }
-    ],
+    ]
 })
 
-module.exports = mongoose.model('Player', schema)
+module.exports = mongoose.model('Player', PlayerSchema)

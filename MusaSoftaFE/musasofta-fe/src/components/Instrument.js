@@ -2,28 +2,31 @@ import React from 'react'
 import { useState } from 'react'
 import { useQuery, useSubscription } from '@apollo/react-hooks';
 import { ONE_PLAYER, CURRENT_CHANGED } from '../queries'
+import '../index.css'
 
 const Instrument = (props) => {
-    console.log(props.instrument)
     const result = useQuery(ONE_PLAYER, {
         variables: { id: props.instrument }
     })
-    console.log(result)
 
     useSubscription(CURRENT_CHANGED, {
         onSubscriptionData: ({ subscriptionData }) => {
-            console.log(subscriptionData)
             const changedPlayer = subscriptionData.data.currentChanged
             if (changedPlayer._id === props.instrument) {
                 setInstrument({
                     instrument: changedPlayer.instrument, 
-                    currentSheet: changedPlayer.currentSheet
+                })
+                const note = changedPlayer.notes.find(n => n.current === true)
+                setNote({
+                    name: note.name,
+                    location: note.location,
                 })
             }
         }
     })
 
-    const [instrument, setInstrument] = useState({instrument: '', currentSheet: ''})
+    const [instrument, setInstrument] = useState({instrument: ''})
+    const [note, setNote] = useState({name: '', location: ''})
     console.log(instrument)
 
     if (!props.show) {
@@ -34,21 +37,39 @@ const Instrument = (props) => {
         return null
     } 
 
-    if (instrument.instrument === '' && instrument.currentSheet === '') {
-        console.log("Toimii")
+    if (instrument.instrument === '' && note.location === '') {
         setInstrument({
             instrument: result.data.onePlayer.instrument, 
-            currentSheet: result.data.onePlayer.currentSheet
         })
+        const currentStart = result.data.onePlayer.notes.find(n => n.current === true)
+        if(currentStart) {
+            setNote({
+                name: currentStart.name,
+                location: currentStart.location
+            })
+        }
     }
     
 
 
+    
     //Luo BE haku id:llä ja välitä id tähän
     return (
         <div>
-            {instrument.instrument}
-            {instrument.currentSheet}
+            <div className='centerDiv'>
+                <h2>
+                    <b>Soitin:</b> {instrument.instrument}
+                </h2>
+            </div>
+            <div className='centerDiv'>
+                <img src={`http://localhost:4000/images/${note.location}`} className='noteImage'/>
+            </div>
+            <div className='centerDiv'>
+                <h3>
+                    <b>Kappale:</b> {note.name}
+                </h3>
+            </div>
+            
         </div>
     )
 }

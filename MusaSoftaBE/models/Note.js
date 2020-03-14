@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const schema = new mongoose.Schema({
+const NoteSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -16,4 +16,4 @@ const schema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('SheetMusic', schema)
+module.exports = mongoose.model('Note', NoteSchema)

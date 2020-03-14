@@ -1,0 +1,29 @@
+.noteImage {
+    padding: 20px;
+    margin: 0 auto;
+}
+
+.centerDiv {
+    text-align: center;
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-areas: 'player choose current';
+}
+
+.gridItem {
+    text-align: center;
+}
+
+.gridPlayer {
+    grid-area: 'player';
+}
+
+.gridChoose {
+    grid-area: 'choose';
+}
+
+.gridCurrent {
+    grid-area: 'current';
+}

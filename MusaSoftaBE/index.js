@@ -9,9 +9,9 @@ const pubsub = new PubSub()
 
 const mongoose = require('mongoose')
 
-const Player = require('./models/Player')
 const Piece = require('./models/Piece')
-const SheetMusic = require('./models/SheetMusic')
+const Player = require('./models/Player')
+const Note = require('./models/Note')
 
 const MONGODB_URI = 'mongodb+srv://kasimusa:jannemusiikki@cluster0-tlywy.mongodb.net/test?retryWrites=true&w=majority'
 
@@ -25,19 +25,20 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
 
 const typeDefs = gql`
 
-    type Subscription {
+    type Subscription { 
         currentChanged: Player!
     }
 
-    type SheetMusic {
-        name: String!,
-        location: String!,
-        current: Boolean!
+    type Note {
+        name: String,
+        location: String,
+        current: Boolean,
+        _id: String
     }
 
     type Player {
         instrument: String!,
-        sheetMusic:[SheetMusic]!,
+        notes:[Note]!,
         _id: String!
     }
 
@@ -56,7 +57,7 @@ const typeDefs = gql`
     type Mutation {
         addPiece(title: String!): Piece ,
         addPlayer(title: String!, instrument: String!): Player
-        changeCurrentSheet(title: String!, instrument: String!, setCurrentTo: String!): Piece
+        changeCurrentSheet(title: String!, instrument: String!, setCurrentTo: String!): Note
         uploadFile(piece: String!, player: String!, name: String!, file: Upload!): Boolean
     }
 `
@@ -64,22 +65,36 @@ const typeDefs = gql`
 const resolvers = {
     Query: {
         helloWorld: () => 'Hello World',
-        allPlayers: () => Player.find({}).populate('sheetMusics'),
-        allPieces: () => Piece.find({}).populate('players').populate('sheetmusics'),
+        allPlayers: async () => await Player.find({}).populate('note').exec(),
+        allPieces: async () => await Piece.find({}).populate({
+            path: 'players',
+            model: Player,
+            populate: {
+                path: 'notes',
+                select: 'name location current',
+                model: Note
+            }
+        }),
         onePiece: async (root, args) => {
             if (!args.title) {
                 return null
             }
-            const piece = await Piece.findOne({ title: args.title }).populate('players').populate('shetmusics')
+            const piece = await Piece.findOne({ title: args.title }).populate({
+                path: 'players',
+                model: Player,
+                populate: {
+                    path: 'notes',
+                    model: Note
+                }
+            })
             return piece
         },
         onePlayer: async (root, args) => {
             console.log(args.id)
-            const player = await Player.findOne({ _id: args.id }).populate('sheetmusics')
+            const player = await Player.findOne({ _id: args.id }).populate('notes')
             console.log(player)
             return player
-        }
-
+        },
     },
     Mutation: {
         addPiece: async(root, args) => {
@@ -97,14 +112,13 @@ const resolvers = {
             return piece
         },
         addPlayer: async(root, args) => {
-            const piece = await Piece.findOne({ title: args.title }).populate('players').populate('sheetmusics')
+            const piece = await Piece.findOne({ title: args.title }).populate({ path: 'players', populate: { path: 'notes'} })
             if (piece.players.find(p => p.instrument === args.instrument)) {
                 return null
             }
             //ESTÄÄ TUPLASOITTIMET. VIRHEILMOITUS?
             const player = new Player({
                 instrument: args.instrument,
-                sheetMusic: []
             })
             await player.save()
             piece.players = piece.players.concat(player)
@@ -113,12 +127,17 @@ const resolvers = {
             return player
         },
         changeCurrentSheet: async(root, args) => {
-            const piece = await Piece.findOne({ title: args.title }).populate('players').populate('sheetmusics')
-            const player = piece.players.find(p => p.id === args.instrument)
-            player.sheetMusic.map(s => s._id === args.current ? s.current === true : s.current === false)
-            player.save()
+            const player = await Player.findOne({_id: args.instrument}).populate('notes')
+            const oldCurrent = player.notes.find(n => n.current === true)
+            const newCurrent = player.notes.find(n => n.location === args.setCurrentTo)
+            if(oldCurrent) {
+                oldCurrent.current = false
+                await oldCurrent.save()
+            }
+            newCurrent.current = true
+            await newCurrent.save()
             pubsub.publish('CHANGE_CURRENT', { currentChanged: player })
-            return piece
+            return null
         },
         uploadFile: async(root, args) => {
             //TOIMIIKO
@@ -136,10 +155,30 @@ const resolvers = {
                 )
 
             console.log("upfi3")
-            const piece = await Piece.findOne({ title: args.piece }).populate('players').populate('sheetmusics')
+            const piece = await Piece.findOne({ title: args.piece }).populate([{
+                path: 'players',
+                model: 'Player',
+                populate: {
+                    path: 'notes',
+                    model: Note
+                }
+            }])
+
             const player = piece.players.find(p => p.instrument === args.player)
-            player.sheetMusic.concat({name: args.name, location: args.filename, current: false})
-            player.save()   
+            console.log(player)
+
+            const updatePlayer = await Player.findOne({_id: player._id}).populate('notes')
+            console.log(updatePlayer)
+            
+            const note = new Note({
+                name: args.name,
+                location: filename,
+                current: false
+            })
+
+            await note.save()
+            updatePlayer.notes = updatePlayer.notes.concat(note)
+            await updatePlayer.save()
 
             return true
         }
