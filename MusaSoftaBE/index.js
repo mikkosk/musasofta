@@ -270,7 +270,7 @@ const resolvers = {
             if(!args.username) {
                 throw new UserInputError('Käyttäjällä tulee olla nimi!')
             }
-            if(args.username.length() < 3) {
+            if(args.username.length < 3) {
                 throw new UserInputError('Käyttäjänimen täytyy olla vähintään 3 merkkiä pitkä')
             }
             if(!args.password) {
