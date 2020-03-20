@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
-import { useQuery, useSubscription } from '@apollo/react-hooks';
+import { useQuery, useSubscription, } from '@apollo/react-hooks';
 import { ONE_PLAYER, CURRENT_CHANGED } from '../queries'
 import '../index.css'
 
@@ -12,22 +12,32 @@ const Instrument = (props) => {
     useSubscription(CURRENT_CHANGED, {
         onSubscriptionData: ({ subscriptionData }) => {
             const changedPlayer = subscriptionData.data.currentChanged
+
             if (changedPlayer._id === props.instrument) {
                 setInstrument({
                     instrument: changedPlayer.instrument, 
                 })
+
                 const note = changedPlayer.notes.find(n => n.current === true)
-                setNote({
-                    name: note.name,
-                    location: note.location,
-                })
+
+                if(!note) {
+                    setNote({
+                        name: 'Älä soita',
+                        location: 'nosong.png'
+                    })
+
+                } else {
+                    setNote({
+                        name: note.name,
+                        location: note.location,
+                    })
+                }
             }
         }
     })
 
     const [instrument, setInstrument] = useState({instrument: ''})
     const [note, setNote] = useState({name: '', location: ''})
-    console.log(instrument)
 
     if (!props.show) {
         return null
@@ -41,19 +51,21 @@ const Instrument = (props) => {
         setInstrument({
             instrument: result.data.onePlayer.instrument, 
         })
+        
         const currentStart = result.data.onePlayer.notes.find(n => n.current === true)
         if(currentStart) {
             setNote({
                 name: currentStart.name,
                 location: currentStart.location
             })
+        } else {
+            setNote({
+                name: '',
+                location: 'nosong.png'
+            })
         }
     }
     
-
-
-    
-    //Luo BE haku id:llä ja välitä id tähän
     return (
         <div>
             <div className='centerDiv'>

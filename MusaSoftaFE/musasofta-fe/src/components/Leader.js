@@ -1,21 +1,32 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { ONE_PIECE, CHANGE_CURRENT } from '../queries'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks'
 import '../index.css'
-
-// Jos välität vain ID:n, muokkaa tätäkin ja BE
+import errorHandler from '../utils/errorHandler'
 
 const Leader = (props) => {
+    
     const result = useQuery(ONE_PIECE, {
         variables: { title: props.piece }
     })
 
-    const [currentSheetTo] = useMutation(CHANGE_CURRENT)
+    const onError = (error) => {
+        errorHandler.handleError(props.setNotification, error.graphQLErrors[0].message)
+    }
+
+    const refetchQueries = [
+        { 
+            query: ONE_PIECE, 
+            variables: { title: props.piece }
+        },
+    ]
+
+    const [currentSheetTo] = useMutation(CHANGE_CURRENT, {
+        refetchQueries,
+        onError
+    })
 
     const setCurrentSheet = async (instrument) => {
-        console.log(piece.title)
-        console.log(instrument)
-        console.log(document.getElementById(instrument).value)
         const result = await currentSheetTo({
             variables: {
                 title: piece.title,
@@ -23,21 +34,17 @@ const Leader = (props) => {
                 setCurrentTo: document.getElementById(instrument).value
             }
         })
-        console.log(result)
     }
     
-    if (!props.piece) {
-        return null
-    }
-    if (result.loading) {
-        return null
-    }    
-    if (!props.show) {
+    if (!props.piece || result.loading || !props.show) {
         return null
     }
 
-    console.log(result)
     const piece = result.data.onePiece
+    if(!piece) {
+        props.setPage('menu')
+        return null
+    }
 
     const returnCurrentDiv = (n) => {
         if (!n.current) {
@@ -49,14 +56,17 @@ const Leader = (props) => {
 
     const returnPlayerCurrent = (p) => {
         const current = p.notes.find(n => n.current === true)
+        if (!current) {
+            return {location: 'nosong.png'}
+        }
         return current
     }
     return (
             <div>
                 <h2 className='centerDiv'>Valitse nuotit soittajille </h2>              
                 {piece.players.map(p => 
-                    <div className='centerDiv'>
-                        <div key={p.instrument} className='gridContainer'>
+                    <div key={p._id} className='centerDiv'>
+                        <div className='gridContainer'>
                             <h3 className='gridPlayer'>Soittaja</h3>
                             <h3 className='gridChoose'>Valitse</h3>
                             <h3 className='gridCurrent'>Nykyinen</h3>
@@ -68,6 +78,7 @@ const Leader = (props) => {
                                             {s.name}
                                         </option>
                                     )}
+                                    <option value='nosong.png'>Älä soita</option>
                                 </select>
                             </div>
                             <div>

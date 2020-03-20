@@ -1,77 +1,79 @@
 import React from 'react'
 import { useState } from 'react'
-import { useMutation } from '@apollo/react-hooks'
-import { ADD_PIECE, ADD_PLAYER, ALL_PIECES, ALL_PLAYERS, UPLOAD_FILE} from '../queries'
+import { useMutation, useQuery } from '@apollo/react-hooks'
+import { ADD_PIECE, ADD_PLAYER, UPLOAD_FILE, CURRENT_USER } from '../queries'
+import errorHandler from '../utils/errorHandler'
+import NoteForm from './NoteForm'
 
 const AddPiece = (props) => {
     const [songTitle, setSongTitle] = useState('')
     const [instrument, setInstrument] = useState('')
     const [allInstruments, setAllInstruments] = useState([])
-    const [sheet, setSheet] = useState('')
 
-    const refetchQueries = [
-        { query: ALL_PIECES },
-        { query: ALL_PLAYERS }
-    ]
-
+    const result = useQuery(CURRENT_USER)
+    const onError = (error) => {
+        errorHandler.handleError(props.setNotification, error.graphQLErrors[0].message)
+    }
     const [addPiece] = useMutation(ADD_PIECE, {
-        refetchQueries,
+        onError,
     })
-
     const [addPlayer] = useMutation(ADD_PLAYER, {
-        refetchQueries,
+        onError,
     })
-
     const [uploadFile] = useMutation(UPLOAD_FILE, {
-        refetchQueries
+        onError,
     })
 
+    const user = result.data.me
 
     const addInstrument = () => {
+        if(!instrument) {
+            return
+        }
         const newInstrument = {instrument: instrument, sheetMusic:[]}
+        if(allInstruments.find(i => i.instrument === newInstrument.instrument)) {
+            errorHandler.handleError(props.setNotification,'Soitin on jo olemassa, valitse toinen!')
+            setInstrument('')
+            return
+        }
         setAllInstruments(allInstruments.concat(newInstrument))
         setInstrument('')
     }
 
-    const addSheet = () => {
-        const title = document.getElementById("instruments").value
-        if (title === "") {
+    const addSheet = (instrumentName, file, name) => {
+
+        if(!file || !instrumentName || !name) {
             return
         }
-        const file = document.getElementById("fileToUpload").files[0]
-        console.log(file)
-        const instrumentToUpdate = allInstruments.find(i => i.instrument === title)
+
+        const instrumentToUpdate = allInstruments.find(i => i.instrument === instrumentName)
         const updatedInstrument = {
             instrument: instrumentToUpdate.instrument,
-            sheetMusic: instrumentToUpdate.sheetMusic.concat({name: sheet, file: file})
+            sheetMusic: instrumentToUpdate.sheetMusic.concat({name, file})
         }
-        const updatedInstruments = allInstruments.map(i => i.instrument === title ? updatedInstrument : i)
+        const updatedInstruments = allInstruments.map(i => i.instrument === instrumentName ? updatedInstrument : i)
         setAllInstruments(updatedInstruments)
-        console.log(allInstruments)
-        setSheet('')
     }
 
     const savePiece = async () => {
-        await addPiece({
-            variables: { title: songTitle }
-        })
-        console.log("Piece")
-        for(const i of allInstruments) {
-            await addPlayer({
-                variables: { title: songTitle, instrument: i.instrument}
+        if (await addPiece({
+            variables: { title: songTitle, user: user.username }
             })
-            console.log("Player")
-            console.log(allInstruments)
-            for(const s of i.sheetMusic) {
-                console.log(s.file)
-                await uploadFile({
-                    variables: { piece: songTitle, player: i.instrument, file: s.file, name: s.name}
+            ) {
+            for(const i of allInstruments) {
+                await addPlayer({
+                    variables: { title: songTitle, instrument: i.instrument}
                 })
-                console.log("Sheet")
+                for(const s of i.sheetMusic) {
+                    await uploadFile({
+                        variables: { piece: songTitle, player: i.instrument, file: s.file, name: s.name}
+                    })
+                }
             }
+            window.location.reload()
+            props.setPage('menu')
         }
-
-        props.setPage('menu')
+        
     }
 
     if(!props.show) {
@@ -93,19 +95,7 @@ const AddPiece = (props) => {
                 onChange={({ target }) => setInstrument(target.value)}
             />
             <button onClick={addInstrument}>Lisää soitin</button>
-
-            <h3>Lisää nuotti</h3>
-            <select id="instruments">
-                <option value="" hidden>Valitse soitin</option>
-                {allInstruments.map(i => 
-                    <option key={i.instrument} value={i.instrument}>{i.instrument}</option>)}
-            </select>
-            <input
-                value={sheet}
-                onChange={({ target }) => setSheet(target.value)}
-            />
-            <input type="file" id="fileToUpload"></input>
-            <button onClick={addSheet}> Lisää nuotti</button>
+            <NoteForm addSheet={addSheet} allInstruments={allInstruments} />
             <></>
             <button onClick={savePiece}>Tallenna</button>
         </div>

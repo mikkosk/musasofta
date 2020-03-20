@@ -27,14 +27,16 @@ export const ALL_PIECES = gql`
                     current
                 }
             }
+            user
         }
     }
 `
 
 export const ADD_PIECE = gql`
-    mutation($title: String!) {
+    mutation($title: String!, $user: String!) {
         addPiece(
             title: $title
+            user: $user
         ) {
             title
             players {
@@ -46,6 +48,7 @@ export const ADD_PIECE = gql`
                 }
                 _id
             }
+            user
         }
     }
 `
@@ -57,11 +60,6 @@ export const ADD_PLAYER = gql`
             instrument: $instrument
         ) {
             instrument
-            notes {
-                name
-                location
-                current
-            }
             _id
         }
     }
@@ -77,9 +75,11 @@ export const ONE_PIECE = gql`
                     name
                     location
                     current
+                    _id
                 }
                 _id
             }
+            user
         }
     }
 `
@@ -126,6 +126,14 @@ export const CURRENT_CHANGED = gql`
     }
 `
 
+export const DELETED_PIECE = gql`
+    subscription {
+        deletedPiece {
+            title
+        }
+    }
+`
+
 export const UPLOAD_FILE = gql`
     mutation($piece: String!, $player: String!, $name: String!, $file: Upload!) {
         uploadFile (
@@ -134,5 +142,63 @@ export const UPLOAD_FILE = gql`
             file: $file,
             name: $name
         )
+    }
+`
+
+export const DELETE_NOTE = gql`
+    mutation($id: String!, $playerId: String!) {
+        deleteNote (
+            id: $id
+            playerId: $playerId
+        )
+    }
+`
+
+export const DELETE_PLAYER = gql`
+    mutation($id: String!, $pieceTitle: String!) {
+        deletePlayer (
+            id: $id
+            pieceTitle: $pieceTitle
+        )
+    }
+`
+
+export const DELETE_PIECE = gql`
+    mutation($title: String!) {
+        deletePiece (
+            title: $title
+        )
+    }
+`
+
+export const LOGIN = gql`
+    mutation($username: String!, $password: String!) {
+        login(
+            username: $username
+            password: $password
+        ) {
+            value
+        }
+    }
+`
+
+export const CREATE_USER = gql`
+    mutation($username: String!, $password: String!) {
+        createUser(
+            username: $username
+            password: $password
+        ) {
+            username
+            _id
+        }
+    }
+`
+
+export const CURRENT_USER = gql`
+    query{
+        me{
+            username
+            _id
+        }
     }
 `

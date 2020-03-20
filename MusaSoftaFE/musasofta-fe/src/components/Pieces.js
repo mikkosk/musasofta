@@ -1,23 +1,31 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Piece from './Piece'
-import { ALL_PIECES, ALL_PLAYERS } from '../queries'
-import { useQuery } from '@apollo/react-hooks'
+import { ALL_PIECES, DELETED_PIECE } from '../queries'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 
 const Pieces = (props) => {
+    const [pieces, setPieces] = useState([])
     const result = useQuery(ALL_PIECES)
-    const result2 = useQuery(ALL_PLAYERS)
 
-    console.log(result)
-    console.log(result2)
-    //console.log('data')
-    //console.log(result.data)
-    //console.log(result.data.allPieces)
-    const pieces = result.data.allPieces
+    useEffect(() => {
+        if(result) {
+            setPieces(result.data.allPieces)
+        }
+        console.log(pieces)
+    }, [result])
 
-    if (!props.show) {
+    useSubscription(DELETED_PIECE, {
+        onSubscriptionData: ({ subscriptionData }) => {
+            const deletedPiece = subscriptionData.data.deletedPiece
+            const updatedPieces = pieces.filter(p => p.title !== deletedPiece.title)
+            setPieces(updatedPieces)
+        }
+    })
+
+    if (!props.show || !pieces) {
         return null
     }
-    
+
     return (
         <div>
             {pieces.map(p => 

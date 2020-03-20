@@ -11,7 +11,11 @@ const PieceSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Player'
         }
-    ]
+    ],
+    user: {
+        type: String,
+        required: true
+    }
 })
 
 module.exports = mongoose.model('Piece', PieceSchema)
