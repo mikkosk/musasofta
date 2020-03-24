@@ -5,7 +5,7 @@ const Notification = (props) => {
         return null
     }
 
-    return <div>{props.notification}</div>
+    return <div className='notification'>{props.notification}</div>
 }
 
 export default Notification

@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken')
 const { PubSub, UserInputError } = require('apollo-server')
 const pubsub = new PubSub()
 const crypto = require('crypto')
+require('dotenv').config()
 
 const mongoose = require('mongoose')
 
@@ -16,8 +17,8 @@ const Piece = require('./models/Piece')
 const Player = require('./models/Player')
 const Note = require('./models/Note')
 const User = require('./models/User')
-const MONGODB_URI = 'mongodb+srv://kasimusa:jannemusiikki@cluster0-tlywy.mongodb.net/test?retryWrites=true&w=majority'
-const JWT_SECRET = 'SALAISUUDETAHA'
+const MONGODB_URI = process.env.MONGODB_URI
+const JWT_SECRET = process.env.SECRET
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
     .then(() => {
         console.log(connected)
@@ -223,8 +224,10 @@ const resolvers = {
             if(!args.name) {
                 throw new UserInputError('Kappaleelle täytyy antaa nimi')
             }
-            const { createReadStream, filename } = await args.file
-
+            const { createReadStream, filename, mimetype } = await args.file
+            if(mimetype !== 'image/jpeg' && mimetype !== 'image/png') {
+                throw new UserInputError(`Vain kuvat. Kappaletta ${args.name} ei lisätty`)
+            }
             await new Promise(res => 
                 createReadStream()
                     .pipe(createWriteStream(path.join(__dirname, "./images", randomString)))

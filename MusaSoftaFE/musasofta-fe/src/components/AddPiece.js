@@ -85,19 +85,25 @@ const AddPiece = (props) => {
             <h2>Lisää kappale</h2>
             <h3>Kappaleen nimi</h3>
             <input
+                className='addInput'
+                placeholder='Valitse kappale...'
                 value={songTitle}
                 onChange={({ target }) => setSongTitle(target.value)}
             />
             <></>
             <h3>Lisää soitin</h3>
             <input
+                className='addInput'
+                placeholder='Valitse soitin...'
                 value={instrument}
                 onChange={({ target }) => setInstrument(target.value)}
             />
-            <button onClick={addInstrument}>Lisää soitin</button>
-            <NoteForm addSheet={addSheet} allInstruments={allInstruments} />
+            <div>
+                <button onClick={addInstrument}>Lisää soitin</button>
+            </div>
+            <NoteForm setNotification={props.setNotification} addSheet={addSheet} allInstruments={allInstruments} />
             <></>
-            <button onClick={savePiece}>Tallenna</button>
+            <button className='saveButton' onClick={savePiece}>Tallenna</button>
         </div>
     )
 }

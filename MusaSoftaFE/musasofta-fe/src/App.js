@@ -9,7 +9,9 @@ import EditPiece from './components/EditPiece';
 import Login from './components/Login'
 import CreateUser from './components/CreateUser';
 import Notification from './components/Notification'
+import BackToMenu from './components/BackToMenu'
 import errorHandler from './utils/errorHandler'
+import './index.css'
 
 const App = () => {
   const [page, setPage] = useState('menu')
@@ -34,11 +36,18 @@ const App = () => {
 
 
   return(
-    <div>
+    <div className='centerDiv'>
       <Notification 
         notification={notification}
       />
+      
+      <BackToMenu
+        show={ page !== 'menu'}
+        setPage={ setPage }
+      />
+
       <Menu 
+        className='full'
         show={ page  === 'menu' }
         setPage={ setPage }
         token={ token }
@@ -90,6 +99,7 @@ const App = () => {
         setPage={ setPage }
         setNotification={setNotification}
       />
+      
 
     </div>
   )

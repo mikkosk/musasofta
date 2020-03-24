@@ -1,15 +1,39 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vw;
+    background: linear-gradient(to right, rgb(171, 233, 227) 0%,rgb(137, 197, 197) 10%, white 10%, white 90%,rgb(137, 197, 197) 90%,rgb(171, 233, 227) 100%);
+}
+
 .noteImage {
-    padding: 20px;
-    margin: 0 auto;
+    max-width: 80vw;
 }
 
 .centerDiv {
     text-align: center;
+    width: 100vw;
+    height: 100vw;
+    align-items: center;
+    display: inline-block;
 }
 
 .gridContainer {
     display: grid;
     grid-template-areas: 'player choose current';
+}
+
+.piecesContainer {
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    text-align: center;
+    margin-left: 20%;
+    margin-right: 20%;
+    width: 60%;
+    border: 2px solid paleturquoise;
+    margin-top: 1%;
+    border-radius: 5%;
+
 }
 
 .gridItem {
@@ -26,4 +50,340 @@
 
 .gridCurrent {
     grid-area: 'current';
+}
+
+.full{
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vw;
+}
+
+.hundred{
+    width: 100%;
+    height: 100vw;
+    text-align: center;
+}
+.all{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+.title {
+    text-align: center;
+    display: inline-block;
+    background-color: paleturquoise;
+    border-radius: 30%;
+}
+
+.pieces {
+    padding-top: 3%;
+    text-align: center;
+    height: 20%;
+    width: 20%;
+    margin-left: 40%;
+    margin-right: 40%;
+    align-items: center;
+}
+
+.logged {
+    text-align: center;
+}
+
+.buttonBig {
+        border-radius: 50%;
+        background-size: 100%;
+        width: 150%;
+        height: 150%;
+        margin-left: -25%;
+        font-size: 60%;
+        font-weight: bolder;
+        overflow: hidden;
+        background: linear-gradient(to bottom, rgb(152, 212, 236), white);
+        border: 2px solid  turquoise;
+}
+
+@media only screen and (min-width: 301px) {
+    .buttonBig {
+        border-radius: 50%;
+        background-size: 100%;
+        width: 100%;
+        height: 100%;
+        margin: auto;
+        font-size: 60%;
+        font-weight: bolder;
+        overflow: hidden;
+    }
+}
+
+@media only screen and (min-width: 451px) {
+    .buttonBig {
+        border-radius: 50%;
+        background-size: 100%;
+        width: 100%;
+        height: 100%;
+        margin: auto;
+        font-size: 100%;
+        overflow: hidden;
+    }
+}
+
+
+.buttonLog {
+    margin-left: 10%;
+    width: 80%;
+    height: 100%;
+    background-color: rgb(137, 197, 197);
+    border-width: 0px;
+    padding: 0px;
+    margin: 0px;
+}
+
+.add {
+    text-align: center;
+    height: 20%;
+    width: 20%;
+    margin-left: 40%;
+    margin-right: 40%;
+    margin-top: 15%;
+    align-items: center;
+}
+
+@media only screen and (min-width: 301px) {
+    .add {
+        text-align: center;
+        height: 20%;
+        width: 20%;
+        margin-left: 40%;
+        margin-right: 40%;
+        margin-top: 5%;
+        align-items: center;
+    }
+}
+
+
+.create {
+    text-align: center;
+}
+
+.titleText {
+    font-size: 100%;
+    overflow: hidden;
+    ;
+}
+
+.label {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.label input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%
+}
+
+.choose {
+    margin-top: 1%;
+    margin-left:20%;
+    width: 60%;
+    height: 20%;
+    background-size: 100%;
+    text-align: center;
+    overflow: hidden;
+}
+
+.chosen {
+    margin-top: 2%;
+    margin-left:35%;
+    margin-right: 35%;
+    width: 30%;
+    height: 30%;
+    border-radius: 5%;
+    background-size: 100%;
+    background-color: cadetblue;
+    text-align: center;
+    overflow: hidden;
+}
+
+.insideChoose {
+    display: inline-block;
+    position: relative;
+    font-size: 100%;
+    margin-top: 3%;
+    background-color: turquoise;
+    margin-bottom: 5%;
+}
+
+.selectInstrument {
+    display: block;
+    margin-left: 15%;
+    width: 70%;
+    height: 60%;
+    font-size: 100%;
+    border: 0px solid white;
+}
+
+.nameInput {
+    display: block;
+    margin-left: 15%;
+    width: 68%;
+    height: 30%;
+    font-size: 100%;
+    text-align: center;
+    background-color: white;
+    border: 1px solid black;
+}
+
+.addInput {
+    display: block;
+    margin-left: 35%;
+    width: 30%;
+    height: 30%;
+    font-size: 100%;
+    text-align: center;
+    background-color: white;
+    border: 1px solid black;
+}
+
+
+.editPiecesGrid {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 50% 50%;
+    text-align: center;
+    margin-top: 1%;
+    margin-left: 20%;
+    margin-right: 20%;
+    width: 60%;
+    border: 1px paleturquoise solid;
+
+}
+
+.topMargin {
+    margin-top: 10%;
+}
+
+.editMargin {
+    margin-top: 2%;
+}
+.noteImage {
+    max-width: 100vw;
+    max-height: 100vw;
+}
+
+.selectDiv {
+    background-color: paleturquoise;
+    height: 100%;
+}
+
+.selectButton {
+    height: 30%;
+    width: 40%;
+    margin-top: 2%;
+    font-size: 60%;
+    font-weight: bolder;
+    background-color: white;
+    border-radius: 50%;
+    border: 1px solid black ;
+    overflow: hidden;
+}
+
+.selectSelect {
+    position: relative;
+    margin-top: 1%;
+    width: 80%;
+    height: 35%;
+    background-color: paleturquoise;
+    border-color: paleturquoise;
+}
+
+.editButton {
+    background-color: white;
+    border: 1px solid white;
+    font-weight: bolder;
+    box-shadow: white;
+    width: 100%;
+    overflow: hidden;
+}
+
+.formButton {
+    background-color: white;
+    border: 1px solid black;
+    width: 10%;
+    height: 3vw;
+    font-size: 60%;
+    overflow: hidden;
+}
+
+.addButton {
+    margin-top: 1%;
+    margin-bottom: 5%;
+    width: 10%;
+    height: 10%;
+    border: 1px black solid;
+    background-color: paleturquoise;
+    font-size: 60%;
+    overflow: hidden;
+}
+
+.saveButton {
+    width: 20%;
+    height: 5vw;
+    border-radius: 100%;
+    border: 1px solid black;
+    background: linear-gradient(to top, paleturquoise, white);
+}
+
+.removeEditButton {
+    background-color: paleturquoise;
+    border: 0px paleturquoise solid;
+}
+
+.editTitle {
+    align-self: center;
+}
+
+.editSelect {
+    background-color: white;
+    border: 0px solid white;
+}
+
+.editAddButton {
+    border: 1px black solid;
+    background-color: paleturquoise;
+}
+
+.noLeakText {
+    margin-left: 10%;
+    width: 80%
+}
+
+.notification {
+    width: 100vw;
+    height: 10vw;
+    background-color: palevioletred;
+}
+
+.backToMenu {
+    left: 10vw;
+    width: 80vw;
+    height: 10vw;
+    background-color: rgb(137, 197, 197);
+    border-width: 0px;
+    font-size: 80%;
+}
+
+@media only screen and (min-width: 750px) {
+    .backToMenu {
+        height: 2vw;
+    }
+}
+
+@media only screen and (min-width: 750px) {
+    .notification {
+        height: 2vw;
+    }
 }

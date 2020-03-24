@@ -1,5 +1,6 @@
 import React from 'react'
 import { useApolloClient } from '@apollo/react-hooks'
+import '../index.css'
 
 const Logout = (props) => {
     const client = useApolloClient()
@@ -7,11 +8,12 @@ const Logout = (props) => {
         props.setToken(null)
         localStorage.clear()
         client.resetStore()
+        window.location.reload()
     }
 
     return (
         <div>
-            <button onClick={logout}>Kirjaudu ulos</button>
+            <button className='buttonLog' onClick={logout}>Kirjaudu ulos</button>
         </div>
     )
 }

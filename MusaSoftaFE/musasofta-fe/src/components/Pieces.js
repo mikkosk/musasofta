@@ -3,16 +3,14 @@ import Piece from './Piece'
 import { ALL_PIECES, DELETED_PIECE } from '../queries'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
 
+
 const Pieces = (props) => {
     const [pieces, setPieces] = useState([])
     const result = useQuery(ALL_PIECES)
 
     useEffect(() => {
-        if(result) {
-            setPieces(result.data.allPieces)
-        }
-        console.log(pieces)
-    }, [result])
+        setPieces(result.data.allPieces)
+    }, [result.data.allPieces])
 
     useSubscription(DELETED_PIECE, {
         onSubscriptionData: ({ subscriptionData }) => {

@@ -1,6 +1,6 @@
 import React from 'react'
-import { useState } from 'react'
-import { useQuery, useSubscription, } from '@apollo/react-hooks';
+import { useState, useEffect } from 'react'
+import { useQuery, useSubscription, useLazyQuery } from '@apollo/react-hooks';
 import { ONE_PLAYER, CURRENT_CHANGED } from '../queries'
 import '../index.css'
 
@@ -8,6 +8,35 @@ const Instrument = (props) => {
     const result = useQuery(ONE_PLAYER, {
         variables: { id: props.instrument }
     })
+
+    const [lazyOnePlayer, { loading, data }] = useLazyQuery(ONE_PLAYER, {
+        variables: { id: props.instrument}
+    })
+    useEffect(() => {
+        if (props.instrument && props.instrument !== 'leader') {
+            lazyOnePlayer()
+        }
+    }, [props.instrument, lazyOnePlayer])
+
+    useEffect(() => {
+        if(data && !loading) {
+            setInstrument({instrument: data.onePlayer.instrument})
+            const note = data.onePlayer.notes.find(n => n.current === true)
+
+            if(!note) {
+                setNote({
+                    name: 'Älä soita',
+                    location: 'nosong.png'
+                })
+
+            } else {
+                setNote({
+                    name: note.name,
+                    location: note.location,
+                })
+            }
+        }
+    }, [loading, data])
 
     useSubscription(CURRENT_CHANGED, {
         onSubscriptionData: ({ subscriptionData }) => {
@@ -46,37 +75,18 @@ const Instrument = (props) => {
     if (result.loading) {
         return null
     } 
-
-    if (instrument.instrument === '' && note.location === '') {
-        setInstrument({
-            instrument: result.data.onePlayer.instrument, 
-        })
-        
-        const currentStart = result.data.onePlayer.notes.find(n => n.current === true)
-        if(currentStart) {
-            setNote({
-                name: currentStart.name,
-                location: currentStart.location
-            })
-        } else {
-            setNote({
-                name: '',
-                location: 'nosong.png'
-            })
-        }
-    }
     
     return (
         <div>
-            <div className='centerDiv'>
+            <div className='editMargin'>
                 <h2>
                     <b>Soitin:</b> {instrument.instrument}
                 </h2>
             </div>
-            <div className='centerDiv'>
+            <div className='editMargin'>
                 <img src={`http://localhost:4000/images/${note.location}`} className='noteImage'/>
             </div>
-            <div className='centerDiv'>
+            <div className='editMargin'>
                 <h3>
                     <b>Kappale:</b> {note.name}
                 </h3>

@@ -1,11 +1,11 @@
 import React from 'react'
-import { ONE_PIECE, CHANGE_CURRENT } from '../queries'
-import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks'
+import { ONE_PIECE, CHANGE_CURRENT, ALL_PIECES } from '../queries'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import '../index.css'
 import errorHandler from '../utils/errorHandler'
 
 const Leader = (props) => {
-    
+
     const result = useQuery(ONE_PIECE, {
         variables: { title: props.piece }
     })
@@ -19,6 +19,9 @@ const Leader = (props) => {
             query: ONE_PIECE, 
             variables: { title: props.piece }
         },
+        {
+            query: ALL_PIECES
+        }
     ]
 
     const [currentSheetTo] = useMutation(CHANGE_CURRENT, {
@@ -27,7 +30,7 @@ const Leader = (props) => {
     })
 
     const setCurrentSheet = async (instrument) => {
-        const result = await currentSheetTo({
+        await currentSheetTo({
             variables: {
                 title: piece.title,
                 instrument: instrument,
@@ -61,6 +64,7 @@ const Leader = (props) => {
         }
         return current
     }
+
     return (
             <div>
                 <h2 className='centerDiv'>Valitse nuotit soittajille </h2>              

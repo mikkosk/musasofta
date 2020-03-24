@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import {ADD_PLAYER, ONE_PIECE, UPLOAD_FILE, DELETE_NOTE, DELETE_PLAYER, DELETE_PIECE, ALL_PIECES} from '../queries'
 import errorHandler from '../utils/errorHandler'
@@ -66,6 +66,7 @@ const EditPiece = (props) => {
     }
 
     const removePlayer = async (player) => {
+        console.log(player)
         await deletePlayer({
             variables: {id: player, pieceTitle: piece.title}
         })
@@ -119,38 +120,44 @@ const EditPiece = (props) => {
 
     return (
         <div>
-            <div>
-                {piece.title}
-                <button onClick={() => removePiece()}>Poista kappale</button>
+            <div className='editMargin'>
+                <div>
+                    <h2 className='noLeakText'>{piece.title}</h2>
+                </div>
+                <button className='editAddButton' onClick={() => removePiece()}>Poista kappale</button>
             </div>
-            <div>
-                Nykyiset soittajat ja kappaleet
+            <div className='editMargin'>
+                <h4 className='noLeakText'>Nykyiset soittajat ja kappaleet</h4>
                 {piece.players.map(p =>
-                    <div key={p._id}>
-                        {p.instrument}
-                        <button onClick={() => removePlayer(p._id)}>Poista soittaja</button>
-                        <select onChange={({target}) => setNote(target.value)}>
+                    <div className='editPiecesGrid' key={p._id}>
+                        <p className='editTitle'>{p.instrument}</p>
+                        <button className='removeEditButton' onClick={() => removePlayer(p._id)}>Poista soittaja</button>
+                        <select className='editSelect' onChange={({target}) => setNote(target.value)}>
                             <option value=''>Selaa nuotteja</option>
                             {p.notes.map(n => 
                                 <option key={n._id} value={n._id}>{n.name}</option>
                             )}
                         </select>
-                        <button onClick={() => removeNote(p._id)}>Poista nuotti</button>     
+                        <button className='removeEditButton' onClick={() => removeNote(p._id)}>Poista nuotti</button>     
                     </div>
                 )}
             </div>
             <div>
                 <form>
                     <div>
-                        Uusi soittaja
+                        <h3 className='noLeakText'>Uusi soittaja</h3>
                     </div>
-                    Soittajan instrumentti: 
-                    <input id='newPlayer'></input>
-                    <button type='reset' onClick={() => newPlayer()}>Lisää</button>
+                    <div>
+                        <p className='noLeakText'>Soittajan instrumentti: </p>
+                    </div>
+                    <input className='nameInput' id='newPlayer'></input>
+                    <div>
+                        <button className='editAddButton' type='reset' onClick={() => newPlayer()}>Lisää</button>
+                    </div>
                 </form>
             </div>
             <div>
-                <NoteForm allInstruments={piece.players} addSheet={addFile} />
+                <NoteForm setNotification={props.setNotification} allInstruments={piece.players} addSheet={addFile} />
             </div>
         </div>
     )

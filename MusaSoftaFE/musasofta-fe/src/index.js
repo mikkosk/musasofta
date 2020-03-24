@@ -11,7 +11,7 @@ import { setContext } from 'apollo-link-context'
 import { split } from 'apollo-link'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
-
+import './index.css'
 
 const wsLink = new WebSocketLink({
     uri: `ws://localhost:4000/graphql`,
@@ -46,8 +46,8 @@ const client = new ApolloClient({
     cache: new InMemoryCache()
 })
 ReactDOM.render(
-    <ApolloProvider client={client} >
-        <App />
+    <ApolloProvider className='full' client={client} >
+        <App className='full'/>
     </ApolloProvider>, 
     document.getElementById('root'));
 

@@ -26,7 +26,7 @@ const Login = (props) => {
             props.setPage('menu')
             window.location.reload()
         }
-    }, [result.data])
+    }, [result.data, props])
 
     if(!props.show) {
         return null
@@ -38,17 +38,21 @@ const Login = (props) => {
     }
 
     return (
-        <div>
+        <div className='topMargin'>
             <form onSubmit={submit}>
                 <div>
-                    Käyttäjätunnus 
+                    <div>
+                        <p>Käyttäjätunnus</p>
+                    </div>                 
                     <input value={username} onChange={({target}) => setUsername(target.value)} />
                 </div>
                 <div>
-                    Salasana
+                    <div>
+                        <p>Salasana</p>
+                    </div>    
                     <input value={password} onChange={({target}) => setPassword(target.value)} />
                 </div>
-                <button type='submit'>Kirjaudu</button>
+                <button className='topMargin' type='submit'>Kirjaudu</button>
             </form>
         </div>
     )

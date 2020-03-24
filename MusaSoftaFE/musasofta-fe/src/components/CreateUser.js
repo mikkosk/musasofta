@@ -36,14 +36,18 @@ const CreateUser = (props) => {
             </h2>
             <form onSubmit={submit}>
                 <div>
-                    Käyttäjätunnus 
+                    <div>
+                        <p>Käyttäjätunnus</p>
+                    </div>
                     <input value={username} onChange={({target}) => setUsername(target.value)} />
                 </div>
                 <div>
-                    Salasana
+                    <div>
+                        <p>Käyttäjätunnus</p>
+                    </div>
                     <input value={password} onChange={({target}) => setPassword(target.value)} />
                 </div>
-                <button type='submit'>Luo</button>
+                <button className='topMargin' type='submit'>Luo</button>
             </form>
         </div>
     )
