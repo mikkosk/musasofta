@@ -67,9 +67,9 @@ const Leader = (props) => {
 
     return (
             <div>
-                <h2 className='centerDiv'>Valitse nuotit soittajille </h2>              
+                <h2>Valitse nuotit soittajille </h2>              
                 {piece.players.map(p => 
-                    <div key={p._id} className='centerDiv'>
+                    <div key={p._id}>
                         <div className='gridContainer'>
                             <h3 className='gridPlayer'>Soittaja</h3>
                             <h3 className='gridChoose'>Valitse</h3>
